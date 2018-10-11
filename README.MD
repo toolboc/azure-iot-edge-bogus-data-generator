@@ -1,7 +1,7 @@
 # azure-iot-edge-bogus-data-generator
 An IoT Edge Module that generates sample data using [Bogus](https://github.com/bchavez/Bogus)
 
-[![Docker Build Status](https://dockerbuildbadges.quelltext.eu/status.svg?organization=toolboc&repository=)](https://hub.docker.com/r/toolboc/azure-iot-edge-bogus-data-generator/builds) [![Docker Pulls](https://img.shields.io/docker/pulls/toolboc/azure-iot-edge-bogus-data-generator.svg?style=flat-square)](https://hub.docker.com/r/toolboc/azure-iot-edge-bogus-data-generator]/)
+[![Docker Build Status](https://dockerbuildbadges.quelltext.eu/status.svg?organization=toolboc&repository=azure-iot-edge-bogus-data-generator)](https://hub.docker.com/r/toolboc/azure-iot-edge-bogus-data-generator/builds) [![Docker Pulls](https://img.shields.io/docker/pulls/toolboc/azure-iot-edge-bogus-data-generator.svg?style=flat-square)](https://hub.docker.com/r/toolboc/azure-iot-edge-bogus-data-generator]/)
 
 ![Demo](https://raw.githubusercontent.com/toolboc/azure-iot-edge-bogus-data-generator/master/assets/demo.png)
 
