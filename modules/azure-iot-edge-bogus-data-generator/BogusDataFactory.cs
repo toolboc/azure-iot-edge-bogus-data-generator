@@ -14,10 +14,16 @@ namespace IoTEdgeBogusDataGenerator
 
         static List<Item> ItemCatalog = new List<Item>()
         {
-            new Item(){ Name = "Jump Seat Blade Replacement Pack, Medium" , Price = 43 },
-            new Item(){ Name = "Sasquatch Ale", Price = 6 },
-            new Item(){ Name = "Thüringer Rostbratwurst", Price = 124 },
-            new Item(){ Name = "Seasonal High Power Strobe Lights (Azure, 36 Volt, 900 Lumens)", Price = 155 }
+            new Item(){ Sku = "TT2099", Name = "Philips Head Screwdriver" , Price = 2 },
+            new Item(){ Sku = "TT2136", Name = "Screw" , Price = 19 },
+            new Item(){ Sku = "TT2152", Name = "Screw" , Price = 7 },
+            new Item(){ Sku = "TT2178", Name = "Screw" , Price = 8 },
+            new Item(){ Sku = "TT2051", Name = "Extension Cord" , Price = 15 },
+            new Item(){ Sku = "TT2053", Name = "LED Lamp" , Price = 14 },
+            new Item(){ Sku = "TT2057", Name = "Timer Outlet" , Price = 9 },
+            new Item(){ Sku = "TT2059", Name = "Paint Roller" , Price = 2 },
+            new Item(){ Sku = "TT2061", Name = "Sponge" , Price = 1 },
+            new Item(){ Sku = "TT2062", Name = "Tile Backsplash" , Price = 2 }
         };
         static List<string> Stores = new List<string>()
         {
@@ -65,9 +71,9 @@ namespace IoTEdgeBogusDataGenerator
             {
                 var item = f.PickRandom(ItemCatalog);
                 
-                if(item.Name == "Jump Seat Blade Replacement Pack, Medium")
+                if(item.Name == "Screw")
                   {
-                    Items.Add(new Item(){Name = "Sasquatch Ale", Price = 6});
+                    Items.Add(new Item(){Sku = "TT2099" , Name = "Philips Head Screwdriver", Price = 2});
                     Console.WriteLine("Correlation Forced");
                   }  
 
