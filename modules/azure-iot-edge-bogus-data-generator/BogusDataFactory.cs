@@ -12,86 +12,89 @@ namespace IoTEdgeBogusDataGenerator
     public class BogusDataFactory
     {
 
-        static List<Item> ItemCatalog = new List<Item>()
-        {
-            new Item(){ Sku = "TT2099", Name = "Philips Head Screwdriver" , Price = 2 },
-            new Item(){ Sku = "TT2136", Name = "Screw" , Price = 19 },
-            new Item(){ Sku = "TT2152", Name = "Screw" , Price = 7 },
-            new Item(){ Sku = "TT2178", Name = "Screw" , Price = 8 },
-            new Item(){ Sku = "TT2051", Name = "Extension Cord" , Price = 15 },
-            new Item(){ Sku = "TT2053", Name = "LED Lamp" , Price = 14 },
-            new Item(){ Sku = "TT2057", Name = "Timer Outlet" , Price = 9 },
-            new Item(){ Sku = "TT2059", Name = "Paint Roller" , Price = 2 },
-            new Item(){ Sku = "TT2061", Name = "Sponge" , Price = 1 },
-            new Item(){ Sku = "TT2062", Name = "Tile Backsplash" , Price = 2 }
-        };
-        static List<string> Stores = new List<string>()
-        {
-            "tailwind-traders.com (web site)",
-            "Redmond Center"
-        };
 
         public static Object CreateBogusData(int counter)
         {
             //Set the randomzier seed if you wish to generate repeatable data sets.
             Randomizer.Seed = new Random(counter);
 
-            var testOrder = new Faker<Order>()
+            var vehicleData = new Faker<VehicleData>()
                 //Ensure all properties have rules. By default, StrictMode is false
                 //Set a global policy by using Faker.DefaultStrictMode
                 .StrictMode(true)
-                //OrderNumber is deterministic
-                .RuleFor(o => o.OrderNumber, f => counter)
-                //Generate Random GUID for PurchaseId
-                .RuleFor(o => o.PurchaseId, f => Guid.NewGuid())
-                //Pick a Random Store
-                .RuleFor(o => o.StoreName, f => f.PickRandom(Stores))
-                //Generate Fake Name
-                .RuleFor(o => o.CustomerName, f => f.Name.FullName())
-                //Generate Fake Email
-                .RuleFor(o => o.Email, (f,o) => f.Internet.Email(o.CustomerName))
-                //Generate Fake Address
-                .RuleFor(o => o.ShippingAddress, f => f.Address.StreetAddress())
+                //Id is deterministic
+                .RuleFor(o => o.Id, f => counter)
+                //Generate Random value for Speed
+                .RuleFor(o => o.Speed, f => f.Random.Number(0, 100))
+                //Generate Random value for CurrentLocation
+                .RuleFor(o => o.CurrentLocation, (f,o) => GetFakeCurrentLocation(f, o))
+                //Generate Random value for Destination
+                .RuleFor(o => o.Destination, (f,o) => GetFakeDestination(f, o.CurrentLocation))
+                //Generate Fake Ip Address
+                .RuleFor(o => o.Ip, f => f.Internet.Ip())
                 //Get Fake Items
-                .RuleFor(o => o.Items, f => GetFakeItems(f))
-                //Get Amount Due
-                .RuleFor(o => o.Amount_Due, (f,o) => GetAmountDue(o.Items))
+                .RuleFor(o => o.Token, f => f.Random.AlphaNumeric(10))
                 //Stamp with the current time
                 .RuleFor(o => o.Timestamp, f => DateTime.UtcNow);
 
-            return testOrder.Generate();
+            return vehicleData.Generate();
         }
 
-        public static List<Item> GetFakeItems(Faker f)
+        public static string GetFakeCurrentLocation(Faker f, VehicleData o)
         {
-            List<Item> Items = new List<Item>();
-            int numberOfItems = f.Random.Number(1,5);
+            //Latitude range( 49.95- 67.5) Longitude range( 25.10 – 135.05) 
+            double LatitudeMin = 49.95;
+            double LatitudeMax = 67.5;
+            double LongitudeMin = 25.10;
+            double LongitudeMax = 135.05;
 
-            for(int i = 0; i < numberOfItems; i++)
+            double CurrentLatitude = 0;
+            double CurrentLongitude = 0;
+
+            //Introduce bias to approximately 1/10 samples
+            if(o.Id % 10 == 0)
             {
-                var item = f.PickRandom(ItemCatalog);
+                //Moscow Coordinates
+                var CommonLatitude = 55.75;
+                var CommonLongitude = 37.61;
+
+                var LatitudeRange = 1;
+                var LongitudeRange = 1;
+
+                CurrentLatitude = LatitudeRange * f.Random.Double() + CommonLatitude;
+                CurrentLongitude = LongitudeRange * f.Random.Double() + CommonLongitude;
+
+                o.Speed = f.Random.Number(0,25);
                 
-                if(item.Name == "Screw")
-                  {
-                    Items.Add(new Item(){Sku = "TT2099" , Name = "Philips Head Screwdriver", Price = 2});
-                    Console.WriteLine("Correlation Forced");
-                  }  
-
-                Items.Add(item);
+                Console.WriteLine("Correlation Forced");
             }
-
-            return Items;
-        }
-        public static int GetAmountDue(List<Item> items)
-        {
-            int total = 0;
-
-            foreach(var item in items)
+            else
             {
-                total += item.Price;
-            }
+                var LatitudeRange = LatitudeMax - LatitudeMin;
+                var LongitudeRange = LongitudeMax - LongitudeMin;
 
-            return total;
+                CurrentLatitude = LatitudeRange * f.Random.Double() + LatitudeMin;
+                CurrentLongitude = LongitudeRange * f.Random.Double() + LongitudeMin;
+            }
+            
+            return String.Format("{0:0.00},{1:0.00}", CurrentLatitude, CurrentLongitude);            
+
+        }
+        public static string GetFakeDestination(Faker f, string currentLocation)
+        {
+
+            var CurrentLocation = currentLocation.Split(',');
+            double CurrentLatitude = Convert.ToDouble(CurrentLocation[0]);
+            double CurrentLongitude = Convert.ToDouble(CurrentLocation[1]);
+
+            int DistanceMin = 10;
+            int DistanceMax = 25;
+
+            double DestinationLatitude = CurrentLatitude + f.Random.Int(DistanceMin, DistanceMax);
+            double DestinationLongitude = CurrentLongitude + f.Random.Int(DistanceMin, DistanceMax);
+
+            return String.Format("{0:0.00},{1:0.00}", DestinationLatitude, DestinationLongitude);
+
         }
     }
 }
